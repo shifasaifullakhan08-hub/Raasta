@@ -88,7 +88,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const found = CITIES.find(c => c.id === saved);
       if (found) return found;
     }
-    return CITIES[0]; // Reading default
+    return CITIES[0]; // Belagavi default
   });
 
   const setSelectedCity = (city: CityConfig) => {
@@ -196,7 +196,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             status: row.status as any,
             roadName: row.road_name,
             area: row.area || '',
-            city: row.city || 'reading-uk',
+            city: row.city || 'belagavi-in',
             coordinates: [row.lat, row.lng],
             description: row.description,
             imageUrl: row.image_url || undefined,

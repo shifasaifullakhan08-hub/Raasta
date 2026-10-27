@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import { RoadIncident } from '../../types';
 import { useApp } from '../../context/AppContext';
+import { Layers, Key, ShieldCheck, MapPin } from 'lucide-react';
 
 // Helper to create high-contrast custom SVG markers matching the reference image
 const createCustomIcon = (category: string, severity: string, isSelected: boolean) => {
@@ -24,7 +25,7 @@ const createCustomIcon = (category: string, severity: string, isSelected: boolea
     bgColor = '#06B6D4'; // Cyan
     iconSvg = `<path d="M2 12c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0 3 2 4.5 0M2 17c1.5-2 3-2 4.5 0s3 2 4.5 0 3-2 4.5 0 3 2 4.5 0" stroke="white" stroke-width="2" fill="none"/>`;
   } else {
-    // Traffic light / sensor icon from reference
+    // Traffic light / sensor icon
     bgColor = '#10B981';
     iconSvg = `<rect x="7" y="2" width="10" height="20" rx="4" fill="#0B111E"/><circle cx="12" cy="6" r="2" fill="#EF4444"/><circle cx="12" cy="12" r="2" fill="#F59E0B"/><circle cx="12" cy="18" r="2" fill="#10B981"/>`;
   }
@@ -70,25 +71,29 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   selectedIncident,
   onMapClick,
   pinLocation,
-  showRoutes = true,
   activeRouteGeometry,
   className = "w-full h-full min-h-[500px]",
   zoomLevel
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
   const routeLayerRef = useRef<L.LayerGroup | null>(null);
   const pinMarkerRef = useRef<L.Marker | null>(null);
 
   const { selectedCity } = useApp();
 
+  // Map Tile Style & API Key state
+  const [mapStyle, setMapStyle] = useState<'carto-dark' | 'osm' | 'google-live'>('carto-dark');
+  const [googleApiKey, setGoogleApiKey] = useState<string>(() => localStorage.getItem('raasta_gmaps_key') || '');
+  const [showKeyInput, setShowKeyInput] = useState<boolean>(false);
+
   // Initialize Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
     if (!mapInstanceRef.current) {
-      // Create Leaflet instance
       const map = L.map(mapContainerRef.current, {
         center: selectedCity.center,
         zoom: zoomLevel || selectedCity.zoom,
@@ -96,13 +101,13 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         attributionControl: false
       });
 
-      // CartoDB Dark Matter tiles matching dark mobility dashboard reference
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png', {
+      // CartoDB Dark Matter tiles matching dark mobility dashboard
+      const defaultTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
         subdomains: 'abcd',
       }).addTo(map);
+      tileLayerRef.current = defaultTile;
 
-      // Add zoom control at bottom-right
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
       markersLayerRef.current = L.layerGroup().addTo(map);
@@ -110,7 +115,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
       mapInstanceRef.current = map;
 
-      // Handle map click for picker
       map.on('click', (e: L.LeafletMouseEvent) => {
         if (onMapClick) {
           onMapClick([e.latlng.lat, e.latlng.lng]);
@@ -119,13 +123,51 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     }
 
     return () => {
-      // Cleanup on unmount
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
     };
   }, []);
+
+  // Handle Map Style Switcher (CartoDB, OpenStreetMap, or Google Maps Tiles with API key)
+  const switchMapStyle = (style: 'carto-dark' | 'osm' | 'google-live') => {
+    setMapStyle(style);
+    if (!mapInstanceRef.current) return;
+
+    if (tileLayerRef.current) {
+      tileLayerRef.current.remove();
+    }
+
+    let url = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png';
+    let options: L.TileLayerOptions = { maxZoom: 19, subdomains: 'abcd' };
+
+    if (style === 'osm') {
+      url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      options = { maxZoom: 19, subdomains: ['a', 'b', 'c'] };
+    } else if (style === 'google-live') {
+      // Google Maps live traffic tiles / roadmap tiles
+      const key = googleApiKey.trim() || import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+      if (key) {
+        url = `https://mt1.google.com/vt/lyrs=m,traffic&x={x}&y={y}&z={z}&key=${key}`;
+        options = { maxZoom: 20 };
+      } else {
+        // Fallback to high-res standard tiles if no key provided
+        url = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+        options = { maxZoom: 20 };
+      }
+    }
+
+    tileLayerRef.current = L.tileLayer(url, options).addTo(mapInstanceRef.current);
+  };
+
+  const saveApiKey = (key: string) => {
+    setGoogleApiKey(key);
+    localStorage.setItem('raasta_gmaps_key', key);
+    if (mapStyle === 'google-live') {
+      switchMapStyle('google-live');
+    }
+  };
 
   // Update center when city changes
   useEffect(() => {
@@ -155,14 +197,12 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
       const marker = L.marker(incident.coordinates, { icon });
 
-      // Click handling
       marker.on('click', () => {
         if (onSelectIncident) {
           onSelectIncident(incident);
         }
       });
 
-      // Quick hover tooltip
       marker.bindTooltip(`
         <div class="font-sans text-xs font-semibold text-slate-800">
           <div>${incident.title}</div>
@@ -201,13 +241,12 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     }
   }, [pinLocation]);
 
-  // Render Route geometry (e.g., active checked journey or commuter corridor)
+  // Render Route geometry
   useEffect(() => {
     if (!routeLayerRef.current || !mapInstanceRef.current) return;
     routeLayerRef.current.clearLayers();
 
     if (activeRouteGeometry && activeRouteGeometry.length > 1) {
-      // Main polyline path
       const polyline = L.polyline(activeRouteGeometry, {
         color: '#2563EB',
         weight: 6,
@@ -216,7 +255,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         lineJoin: 'round'
       });
 
-      // Glow backdrop
       const glowLine = L.polyline(activeRouteGeometry, {
         color: '#60A5FA',
         weight: 12,
@@ -227,7 +265,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       glowLine.addTo(routeLayerRef.current);
       polyline.addTo(routeLayerRef.current);
 
-      // Start pin (green)
       const startIcon = L.divIcon({
         html: `<div class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-lg flex items-center justify-center text-white text-[10px] font-bold">A</div>`,
         iconSize: [24, 24],
@@ -235,7 +272,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       });
       L.marker(activeRouteGeometry[0], { icon: startIcon }).addTo(routeLayerRef.current);
 
-      // End pin (rose)
       const endIcon = L.divIcon({
         html: `<div class="w-6 h-6 rounded-full bg-rose-600 border-2 border-white shadow-lg flex items-center justify-center text-white text-[10px] font-bold">B</div>`,
         iconSize: [24, 24],
@@ -243,28 +279,92 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       });
       L.marker(activeRouteGeometry[activeRouteGeometry.length - 1], { icon: endIcon }).addTo(routeLayerRef.current);
 
-      // Fit bounds
       mapInstanceRef.current.fitBounds(polyline.getBounds(), { padding: [40, 40] });
     }
   }, [activeRouteGeometry]);
 
   return (
-    <div className={`relative ${className} overflow-hidden rounded-2xl border border-brand-border shadow-2xl`}>
+    <div className={`relative ${className} overflow-hidden rounded-3xl border border-brand-border shadow-bubble`}>
       <div ref={mapContainerRef} className="w-full h-full min-h-[400px]" />
 
       {/* Map Overlay Controls / Telemetry Badge */}
-      <div className="absolute top-4 left-4 z-[400] flex flex-col gap-2 pointer-events-none">
-        <div className="bg-brand-darkest/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-brand-border shadow-xl pointer-events-auto flex items-center gap-3">
+      <div className="absolute top-4 left-4 z-[400] flex flex-col gap-2">
+        <div className="bg-brand-darkest/90 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-brand-border shadow-bubble flex items-center gap-3">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs font-semibold text-white tracking-wide">
-              {selectedCity.name} Live Map
+            <span className="text-xs font-bold text-white tracking-wide">
+              {selectedCity.name}, Karnataka
             </span>
           </div>
-          <span className="text-[11px] text-slate-400 font-mono">
-            {incidents.length} Active Events
+          <span className="text-[11px] text-brand-accent font-mono">
+            {incidents.length} Active Hazards
           </span>
         </div>
+
+        {/* Live Map Tile Layer Switcher */}
+        <div className="bg-brand-darkest/90 backdrop-blur-md p-1.5 rounded-2xl border border-brand-border shadow-bubble flex items-center gap-1 text-[11px]">
+          <button
+            onClick={() => switchMapStyle('carto-dark')}
+            className={`px-2.5 py-1 rounded-xl font-semibold transition-all ${
+              mapStyle === 'carto-dark' ? 'bg-brand-primary text-white' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Dark Carto
+          </button>
+          <button
+            onClick={() => switchMapStyle('google-live')}
+            className={`px-2.5 py-1 rounded-xl font-semibold transition-all flex items-center gap-1 ${
+              mapStyle === 'google-live' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <span>Live Traffic</span>
+          </button>
+          <button
+            onClick={() => switchMapStyle('osm')}
+            className={`px-2.5 py-1 rounded-xl font-semibold transition-all ${
+              mapStyle === 'osm' ? 'bg-brand-primary text-white' : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            OSM
+          </button>
+
+          <button
+            onClick={() => setShowKeyInput(!showKeyInput)}
+            className="p-1 rounded-lg text-slate-400 hover:text-amber-400 transition-colors ml-1"
+            title="Configure Map API Key"
+          >
+            <Key className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Optional Custom API Key Modal/Input Popover */}
+        {showKeyInput && (
+          <div className="bg-brand-card/95 backdrop-blur-md p-3 rounded-2xl border border-brand-border shadow-2xl w-64 text-xs space-y-2">
+            <div className="flex items-center justify-between text-slate-300">
+              <span className="font-bold flex items-center gap-1.5 text-white">
+                <Key className="w-3.5 h-3.5 text-amber-400" />
+                Live Map API Key
+              </span>
+              <button onClick={() => setShowKeyInput(false)} className="text-slate-400 hover:text-white">&times;</button>
+            </div>
+            <p className="text-[10px] text-slate-400 leading-snug">
+              Enter your Google Maps or Mapbox API key for live traffic & satellite layers in Belagavi.
+            </p>
+            <input
+              type="password"
+              placeholder="Paste Maps API Key..."
+              value={googleApiKey}
+              onChange={(e) => saveApiKey(e.target.value)}
+              className="w-full bg-brand-surface border border-brand-border rounded-xl px-2.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-primary"
+            />
+            {googleApiKey && (
+              <span className="text-[10px] text-emerald-400 flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3" />
+                Key active & saved in browser
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -198,7 +198,7 @@ export const ReportIssuePage: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. A329 Kings Road or Bath Road junction"
+                  placeholder="e.g. Rani Chennamma Circle, Khanapur Road, or NH-48"
                   value={roadName}
                   onChange={(e) => setRoadName(e.target.value)}
                   className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none"
@@ -207,11 +207,11 @@ export const ReportIssuePage: React.FC = () => {
 
               <div className="bg-brand-surface border border-brand-border rounded-xl px-3.5 py-2.5">
                 <label className="block text-[10px] uppercase font-bold text-slate-400 mb-0.5">
-                  Neighborhood / Locality
+                  Neighborhood / Locality in Belagavi
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Caversham or West Reading"
+                  placeholder="e.g. Tilakwadi, Camp, Shahapur, or Vadgaon"
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
                   className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none"

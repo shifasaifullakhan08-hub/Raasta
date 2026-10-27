@@ -2,200 +2,189 @@ import { CityConfig, RoadIncident, SavedRoute, UserNotification, UserProfile } f
 
 export const CITIES: CityConfig[] = [
   {
-    id: 'reading-uk',
-    name: 'Reading',
-    country: 'United Kingdom',
-    center: [51.4543, -0.9781],
+    id: 'belagavi-in',
+    name: 'Belagavi',
+    country: 'Karnataka, India',
+    center: [15.8497, 74.4977],
     zoom: 13,
-    authorities: ['Reading Borough Council', 'Thames Valley Traffic Operations', 'National Highways']
-  },
-  {
-    id: 'london-uk',
-    name: 'London',
-    country: 'United Kingdom',
-    center: [51.5074, -0.1278],
-    zoom: 12,
-    authorities: ['Transport for London (TfL)', 'Metropolitan Police']
-  },
-  {
-    id: 'san-francisco',
-    name: 'San Francisco',
-    country: 'United States',
-    center: [37.7749, -122.4194],
-    zoom: 13,
-    authorities: ['SFMTA', 'Caltrans District 4']
+    authorities: [
+      'Belagavi City Police Traffic Division',
+      'Belagavi Smart City Corporation (BSCL)',
+      'Public Works Department (PWD) Belagavi',
+      'National Highways Authority of India (NHAI)'
+    ]
   }
 ];
 
 export const INITIAL_INCIDENTS: RoadIncident[] = [
   {
-    id: 'inc-101',
-    title: 'Severe Water Pipe Burst & Emergency Roadblock',
+    id: 'inc-bgm-101',
+    title: 'Emergency Drainage Repair & Roadblock at Chennamma Circle',
     category: 'roadblock',
     severity: 'critical',
     status: 'officially_confirmed',
-    roadName: 'A329 Kings Road near Abbey Square',
-    area: 'Central Reading',
-    city: 'reading-uk',
-    coordinates: [51.4538, -0.9675],
-    description: 'Thames Water emergency repair following a 24-inch water main burst. Both eastbound lanes closed with major structural tarmac breakdown.',
-    reportedAt: '2026-10-19T07:15:00Z',
-    updatedAt: '2026-10-19T08:30:00Z',
-    expectedResolution: '2026-10-21T18:00:00Z',
+    roadName: 'Rani Chennamma Circle towards College Road',
+    area: 'Central Belagavi',
+    city: 'belagavi-in',
+    coordinates: [15.8576, 74.5074],
+    description: 'Smart City storm-water drain overhaul and culvert reconstruction. Both north-bound lanes blocked with traffic police diverting via Kaktives Road.',
+    reportedAt: '2026-10-27T08:15:00Z',
+    updatedAt: '2026-10-27T09:40:00Z',
+    expectedResolution: '2026-10-29T18:00:00Z',
     imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=600&q=80',
     sourceType: 'official',
-    sourceName: 'Reading Borough Council Traffic Management',
-    isDemo: true,
-    estimatedDelayMinutes: 28,
-    affectedRoutesCount: 142,
+    sourceName: 'Belagavi City Police Traffic Division',
+    isDemo: false,
+    estimatedDelayMinutes: 25,
+    affectedRoutesCount: 168,
     confirmations: [
-      { id: 'c1', type: 'confirm', timestamp: '2026-10-19T07:45:00Z' },
-      { id: 'c2', type: 'still_happening', timestamp: '2026-10-19T08:15:00Z' },
+      { id: 'c1', type: 'confirm', timestamp: '2026-10-27T08:45:00Z' },
+      { id: 'c2', type: 'still_happening', timestamp: '2026-10-27T09:30:00Z' },
     ],
     statusHistory: [
-      { status: 'pending_review', timestamp: '2026-10-19T07:15:00Z', updatedBy: 'Emergency Feed' },
-      { status: 'officially_confirmed', timestamp: '2026-10-19T07:30:00Z', updatedBy: 'Traffic Ops Duty Officer', reason: 'Highways Inspector on site' }
+      { status: 'pending_review', timestamp: '2026-10-27T08:15:00Z', updatedBy: 'Traffic Control Room' },
+      { status: 'officially_confirmed', timestamp: '2026-10-27T08:35:00Z', updatedBy: 'ACP Traffic Belagavi', reason: 'Inspector confirmed on-site barricading' }
     ]
   },
   {
-    id: 'inc-102',
-    title: 'Scheduled Resurfacing & Single-Lane Flow',
+    id: 'inc-bgm-102',
+    title: 'Flyover Pillar Maintenance & Single-Lane Flow',
     category: 'maintenance',
     severity: 'moderate',
     status: 'verified',
-    roadName: 'A33 Relief Road (Rose Kiln Lane)',
-    area: 'South Reading',
-    city: 'reading-uk',
-    coordinates: [51.4392, -0.9798],
-    description: 'Highway resurfacing work and kerb repairs. Temporary 3-way traffic signals operational during daytime off-peak and night hours.',
-    reportedAt: '2026-10-18T10:00:00Z',
-    updatedAt: '2026-10-19T06:00:00Z',
-    expectedResolution: '2026-10-25T17:00:00Z',
+    roadName: 'NH 48 Pune-Bengaluru Highway (near Fort Lake)',
+    area: 'Belagavi Bypass / Killa',
+    city: 'belagavi-in',
+    coordinates: [15.8625, 74.5230],
+    description: 'Expansion joint replacement on NH-48 flyover arm. Heavy transport vehicles restricted to single-lane passage with warning reflectors.',
+    reportedAt: '2026-10-26T10:00:00Z',
+    updatedAt: '2026-10-27T07:15:00Z',
+    expectedResolution: '2026-10-31T20:00:00Z',
     sourceType: 'official',
-    sourceName: 'National Highways Scheduled Works',
-    isDemo: true,
-    estimatedDelayMinutes: 12,
-    affectedRoutesCount: 89,
+    sourceName: 'NHAI Project Implementation Unit Dharwad-Belagavi',
+    isDemo: false,
+    estimatedDelayMinutes: 15,
+    affectedRoutesCount: 94,
     confirmations: [
-      { id: 'c3', type: 'still_happening', timestamp: '2026-10-19T07:00:00Z' }
+      { id: 'c3', type: 'still_happening', timestamp: '2026-10-27T08:00:00Z' }
     ],
     statusHistory: [
-      { status: 'verified', timestamp: '2026-10-18T10:00:00Z', updatedBy: 'System Import' }
+      { status: 'verified', timestamp: '2026-10-26T10:00:00Z', updatedBy: 'NHAI Engineer' }
     ]
   },
   {
-    id: 'inc-103',
-    title: 'Deep Hazardous Pothole cluster near Roundabout',
+    id: 'inc-bgm-103',
+    title: 'Cluster of Deep Potholes near Bogarves Bridge Approach',
     category: 'pothole',
     severity: 'high',
     status: 'community_reported',
-    roadName: 'Caversham Bridge approach (A4155)',
-    area: 'Caversham',
-    city: 'reading-uk',
-    coordinates: [51.4655, -0.9760],
-    description: 'Series of 3 sharp pothole cavities on the left cycling & car lane right before the bridge. Two motorists reported tire deflation.',
-    reportedAt: '2026-10-19T06:45:00Z',
-    updatedAt: '2026-10-19T08:10:00Z',
+    roadName: 'Bogarves Road towards Tilakwadi 1st Gate',
+    area: 'Bogarves / Tilakwadi',
+    city: 'belagavi-in',
+    coordinates: [15.8450, 74.5020],
+    description: 'Series of sharp bitumen potholes on the left carriage lane following rain showers. Two two-wheelers reported skidding incidents.',
+    reportedAt: '2026-10-27T07:30:00Z',
+    updatedAt: '2026-10-27T09:10:00Z',
     imageUrl: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=600&q=80',
     sourceType: 'community',
-    sourceName: 'Citizen Commuter #4912',
-    isDemo: true,
-    estimatedDelayMinutes: 8,
-    affectedRoutesCount: 34,
+    sourceName: 'Citizen Commuter (Rohan K.)',
+    isDemo: false,
+    estimatedDelayMinutes: 10,
+    affectedRoutesCount: 52,
     confirmations: [
-      { id: 'c4', type: 'confirm', timestamp: '2026-10-19T07:10:00Z', comment: 'Hit one this morning, rim dented.' },
-      { id: 'c5', type: 'still_happening', timestamp: '2026-10-19T08:00:00Z' },
-      { id: 'c6', type: 'confirm', timestamp: '2026-10-19T08:10:00Z' }
+      { id: 'c4', type: 'confirm', timestamp: '2026-10-27T08:10:00Z', comment: 'Very deep cavity right beside railway gate curb.' },
+      { id: 'c5', type: 'still_happening', timestamp: '2026-10-27T08:50:00Z' },
+      { id: 'c6', type: 'confirm', timestamp: '2026-10-27T09:10:00Z' }
     ],
     statusHistory: [
-      { status: 'community_reported', timestamp: '2026-10-19T06:45:00Z', updatedBy: 'Mobile App Report' }
+      { status: 'community_reported', timestamp: '2026-10-27T07:30:00Z', updatedBy: 'Citizen App Submission' }
     ]
   },
   {
-    id: 'inc-104',
-    title: 'One-Way Diversion for Gas Pipeline Upgrades',
+    id: 'inc-bgm-104',
+    title: 'Market Day Diversion around Khade Bazar & Ganpat Galli',
     category: 'diversion',
     severity: 'moderate',
     status: 'verified',
-    roadName: 'Oxford Road (near West Reading Station)',
-    area: 'West Reading',
-    city: 'reading-uk',
-    coordinates: [51.4582, -0.9950],
-    description: 'Traffic diverted via Beresford Road and Portman Road. Inbound buses running on altered schedule with 10-15m delays.',
-    reportedAt: '2026-10-17T09:00:00Z',
-    updatedAt: '2026-10-19T07:30:00Z',
-    expectedResolution: '2026-10-22T20:00:00Z',
+    roadName: 'Khade Bazar Main Corridor',
+    area: 'Old City Belagavi',
+    city: 'belagavi-in',
+    coordinates: [15.8540, 74.5120],
+    description: 'Temporary vehicular entry diversion for festive bazaar stalls and pedestrian safety. Four-wheelers diverted via Ramdev Galli.',
+    reportedAt: '2026-10-25T09:00:00Z',
+    updatedAt: '2026-10-27T08:30:00Z',
+    expectedResolution: '2026-10-28T22:00:00Z',
     sourceType: 'official',
-    sourceName: 'SGN Gas Networks',
-    isDemo: true,
-    estimatedDelayMinutes: 14,
-    affectedRoutesCount: 65,
+    sourceName: 'Belagavi City Corporation (BCC)',
+    isDemo: false,
+    estimatedDelayMinutes: 12,
+    affectedRoutesCount: 78,
     confirmations: [
-      { id: 'c7', type: 'confirm', timestamp: '2026-10-18T12:00:00Z' }
+      { id: 'c7', type: 'confirm', timestamp: '2026-10-26T12:00:00Z' }
     ],
     statusHistory: [
-      { status: 'verified', timestamp: '2026-10-17T09:00:00Z', updatedBy: 'Moderator Alex' }
+      { status: 'verified', timestamp: '2026-10-25T09:00:00Z', updatedBy: 'BCC Ward Inspector' }
     ]
   },
   {
-    id: 'inc-105',
-    title: 'Flash Flooding & Road Dip Waterlogging',
+    id: 'inc-bgm-105',
+    title: 'Waterlogging & Dip Flooding near Old PB Road Underpass',
     category: 'flooding',
     severity: 'critical',
     status: 'officially_confirmed',
-    roadName: 'Mill Lane Underpass near Oracle Centre',
-    area: 'Town Centre',
-    city: 'reading-uk',
-    coordinates: [51.4510, -0.9702],
-    description: 'Standing flood water over 40cm depth due to blocked storm drains following heavy downpour. Impassable for sedans and small vehicles.',
-    reportedAt: '2026-10-19T06:10:00Z',
-    updatedAt: '2026-10-19T08:20:00Z',
-    expectedResolution: '2026-10-19T14:00:00Z',
+    roadName: 'Old PB Road Railway Underbridge (RUB)',
+    area: 'Shahapur / Vadgaon',
+    city: 'belagavi-in',
+    coordinates: [15.8360, 74.5090],
+    description: 'Standing water level exceeding 1.5 feet under the railway bridge. Auto-rickshaws and bikes stalled; pump teams deployed by city corporation.',
+    reportedAt: '2026-10-27T06:50:00Z',
+    updatedAt: '2026-10-27T09:20:00Z',
+    expectedResolution: '2026-10-27T16:00:00Z',
     imageUrl: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=600&q=80',
     sourceType: 'official',
-    sourceName: 'Environment Agency Flood Alert Unit',
-    isDemo: true,
-    estimatedDelayMinutes: 35,
-    affectedRoutesCount: 118,
+    sourceName: 'Disaster Management Cell Belagavi',
+    isDemo: false,
+    estimatedDelayMinutes: 30,
+    affectedRoutesCount: 135,
     confirmations: [
-      { id: 'c8', type: 'still_happening', timestamp: '2026-10-19T07:55:00Z' },
-      { id: 'c9', type: 'still_happening', timestamp: '2026-10-19T08:15:00Z' }
+      { id: 'c8', type: 'still_happening', timestamp: '2026-10-27T08:15:00Z' },
+      { id: 'c9', type: 'still_happening', timestamp: '2026-10-27T09:05:00Z' }
     ],
     statusHistory: [
-      { status: 'officially_confirmed', timestamp: '2026-10-19T06:30:00Z', updatedBy: 'Highways Flood Unit' }
+      { status: 'officially_confirmed', timestamp: '2026-10-27T07:10:00Z', updatedBy: 'Disaster Response Officer' }
     ]
   },
   {
-    id: 'inc-106',
-    title: 'Faulty SCOOT Traffic Controller Signal Lights',
+    id: 'inc-bgm-106',
+    title: 'Traffic Signal Sensor Calibration at Dharmveer Sambhaji Chowk',
     category: 'maintenance',
     severity: 'minor',
     status: 'under_review',
-    roadName: 'Forbury Road / Vastern Road Junction',
-    area: 'Station Area',
-    city: 'reading-uk',
-    coordinates: [51.4590, -0.9690],
-    description: 'Traffic signals flashing amber intermittently causing hesitation and minor queues during morning rush hour.',
-    reportedAt: '2026-10-19T07:50:00Z',
-    updatedAt: '2026-10-19T08:05:00Z',
+    roadName: 'Sambhaji Circle (Bogarves to Camp Junction)',
+    area: 'Camp / Belagavi Cantonment',
+    city: 'belagavi-in',
+    coordinates: [15.8510, 74.5005],
+    description: 'Adaptive sensor sync during peak morning traffic. Traffic wardens manually regulating movement with brief 3-5m pauses.',
+    reportedAt: '2026-10-27T08:30:00Z',
+    updatedAt: '2026-10-27T09:15:00Z',
     sourceType: 'sensor_ai',
-    sourceName: 'Urban Traffic Control (SCOOT) Telemetry',
-    isDemo: true,
+    sourceName: 'Belagavi Smart City Intelligent Traffic Control System',
+    isDemo: false,
     estimatedDelayMinutes: 5,
-    affectedRoutesCount: 42,
+    affectedRoutesCount: 45,
     confirmations: [],
     statusHistory: [
-      { status: 'under_review', timestamp: '2026-10-19T07:55:00Z', updatedBy: 'Telemetry Ingestion' }
+      { status: 'under_review', timestamp: '2026-10-27T08:35:00Z', updatedBy: 'Smart City Control Room' }
     ]
   }
 ];
 
 export const INITIAL_USER: UserProfile = {
-  id: 'usr-demo-01',
-  fullName: 'Alan Harrison',
-  email: 'alan.harrison@mobility.io',
-  role: 'commuter', // toggleable to admin/moderator for demo purposes!
-  selectedCity: 'reading-uk',
+  id: 'usr-bgm-01',
+  fullName: 'Praveen Kulkarni',
+  email: 'praveen.belagavi@raasta.io',
+  role: 'commuter',
+  selectedCity: 'belagavi-in',
   notificationPreferences: {
     email: true,
     push: true,
@@ -208,81 +197,81 @@ export const INITIAL_USER: UserProfile = {
 
 export const INITIAL_ROUTES: SavedRoute[] = [
   {
-    id: 'rt-1',
-    name: 'Home to Tech Campus (Daily Commute)',
+    id: 'rt-bgm-1',
+    name: 'Tilakwadi to Belagavi Fort & Civil Hospital (Daily Commute)',
     origin: {
       id: 'p-1',
-      label: 'Home (Caversham Heights)',
-      address: 'Woodcote Way, Caversham, Reading RG4 7EU',
-      coordinates: [51.4740, -0.9850],
+      label: 'Home (Tilakwadi 2nd Gate)',
+      address: 'Congress Road, Tilakwadi, Belagavi, Karnataka 590006',
+      coordinates: [15.8390, 74.4980],
       icon: 'home'
     },
     destination: {
       id: 'p-2',
-      label: 'Office (Green Park Campus)',
-      address: '100 Longwater Ave, Green Park, Reading RG2 6GP',
-      coordinates: [51.4230, -0.9820],
+      label: 'Belagavi Fort Tech Park & BIMS',
+      address: 'Fort Road, Camp, Belagavi, Karnataka 590016',
+      coordinates: [15.8610, 74.5180],
       icon: 'briefcase'
     },
     isFavorite: true,
     notificationsEnabled: true,
-    preferredDepartureTime: '08:15',
-    estimatedDurationMins: 22,
-    distanceKm: 8.4
+    preferredDepartureTime: '08:45',
+    estimatedDurationMins: 16,
+    distanceKm: 5.8
   },
   {
-    id: 'rt-2',
-    name: 'Home to University Sports Center',
+    id: 'rt-bgm-2',
+    name: 'Camp to VTU Machhe Campus',
     origin: {
       id: 'p-1',
-      label: 'Home (Caversham Heights)',
-      address: 'Woodcote Way, Caversham, Reading RG4 7EU',
-      coordinates: [51.4740, -0.9850]
+      label: 'Home (Tilakwadi / Camp)',
+      address: 'Camp Area, Belagavi 590001',
+      coordinates: [15.8500, 74.4980]
     },
     destination: {
       id: 'p-3',
-      label: 'University Whiteknights Sports',
-      address: 'Shinfield Rd, Reading RG6 6UR',
-      coordinates: [51.4410, -0.9450],
-      icon: 'dumbbell'
+      label: 'Visvesvaraya Technological University (VTU)',
+      address: 'Jnana Sangama, Machhe, Belagavi, Karnataka 590018',
+      coordinates: [15.8070, 74.4620],
+      icon: 'graduation-cap'
     },
     isFavorite: false,
     notificationsEnabled: false,
-    preferredDepartureTime: '17:45',
-    estimatedDurationMins: 18,
-    distanceKm: 6.8
+    preferredDepartureTime: '09:15',
+    estimatedDurationMins: 22,
+    distanceKm: 9.4
   }
 ];
 
 export const INITIAL_NOTIFICATIONS: UserNotification[] = [
   {
     id: 'notif-1',
-    title: 'Severe Alert on your route: Home to Tech Campus',
-    message: 'Kings Road burst pipe & Mill Lane flood may add ~28m to your morning journey. Alternate via A4155 recommended.',
+    title: 'Severe Alert on your route: Tilakwadi to Fort Area',
+    message: 'Chennamma Circle drainage roadblock & Old PB Road RUB waterlogging may add ~25m. Alternate via Khanapur Road / Camp bypass recommended.',
     type: 'incident_alert',
     severity: 'critical',
-    incidentId: 'inc-101',
-    routeId: 'rt-1',
+    incidentId: 'inc-bgm-101',
+    routeId: 'rt-bgm-1',
     timestamp: '15 mins ago',
     isRead: false
   },
   {
     id: 'notif-2',
-    title: 'Community Report Verified nearby',
-    message: 'Caversham Bridge pothole report has been confirmed by 3 motorists and queued for inspection.',
+    title: 'Community Pothole Report Confirmed in Tilakwadi',
+    message: 'Bogarves bridge approach pothole confirmed by 3 motorists. Tagged for Belagavi City Corporation (BCC) patch repair.',
     type: 'report_update',
     severity: 'high',
-    incidentId: 'inc-103',
+    incidentId: 'inc-bgm-103',
     timestamp: '42 mins ago',
     isRead: false
   },
   {
     id: 'notif-3',
-    title: 'Scheduled Night Maintenance Tonight',
-    message: 'A33 Relief road resurfacing active from 21:00. Single lane restrictions.',
+    title: 'NH-48 Flyover Night Maintenance Planned',
+    message: 'Flyover joint work active from 21:00 near Fort Lake. Expect single-lane restrictions.',
     type: 'route_warning',
     severity: 'moderate',
-    incidentId: 'inc-102',
+    incidentId: 'inc-bgm-102',
     timestamp: '2 hours ago',
     isRead: true
   }

@@ -82,7 +82,7 @@ export const LandingPage: React.FC = () => {
                   <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
                   <input
                     type="text"
-                    placeholder="Enter origin (e.g. Caversham Heights)..."
+                    placeholder="Enter origin (e.g. Tilakwadi 2nd Gate)..."
                     value={originInput}
                     onChange={(e) => setOriginInput(e.target.value)}
                     className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none"
@@ -93,7 +93,7 @@ export const LandingPage: React.FC = () => {
                   <Navigation className="w-4 h-4 text-rose-400 shrink-0" />
                   <input
                     type="text"
-                    placeholder="Enter destination (e.g. Tech Park)..."
+                    placeholder="Enter destination (e.g. Belagavi Fort / Civil Hospital)..."
                     value={destInput}
                     onChange={(e) => setDestInput(e.target.value)}
                     className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none"
