@@ -81,14 +81,16 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Cities
+  // Cities — Strictly locked to Belagavi, Karnataka, India
   const [selectedCity, setSelectedCityState] = useState<CityConfig>(() => {
     const saved = localStorage.getItem('raasta_city');
-    if (saved) {
+    if (saved && saved === 'belagavi-in') {
       const found = CITIES.find(c => c.id === saved);
       if (found) return found;
     }
-    return CITIES[0]; // Belagavi default
+    // Always default to Belagavi
+    localStorage.setItem('raasta_city', 'belagavi-in');
+    return CITIES[0];
   });
 
   const setSelectedCity = (city: CityConfig) => {
@@ -162,10 +164,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     syncProfileToSupabase(updated);
   };
 
-  // Incidents
+  // Incidents — Filtered or initialized for Belagavi, Karnataka
   const [incidents, setIncidents] = useState<RoadIncident[]>(() => {
     const saved = localStorage.getItem('raasta_incidents');
-    return saved ? JSON.parse(saved) : INITIAL_INCIDENTS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed.every((i: any) => i.city === 'belagavi-in')) {
+          return parsed;
+        }
+      } catch (e) {
+        // Fallback to fresh initial incidents
+      }
+    }
+    return INITIAL_INCIDENTS;
   });
 
   const [selectedIncident, setSelectedIncident] = useState<RoadIncident | null>(null);

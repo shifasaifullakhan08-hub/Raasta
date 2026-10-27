@@ -101,10 +101,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         attributionControl: false
       });
 
-      // CartoDB Dark Matter tiles matching dark mobility dashboard
-      const defaultTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png', {
+      // CartoDB Dark Matter / Positron tiles without requiring an API key, fallback to OpenStreetMap
+      const defaultTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
         subdomains: 'abcd',
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
       }).addTo(map);
       tileLayerRef.current = defaultTile;
 
@@ -130,7 +131,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     };
   }, []);
 
-  // Handle Map Style Switcher (CartoDB, OpenStreetMap, or Google Maps Tiles with API key)
+  // Handle Map Style Switcher (Standard OSM, CartoDB Light/Dark, or Google Maps Tiles with API key)
   const switchMapStyle = (style: 'carto-dark' | 'osm' | 'google-live') => {
     setMapStyle(style);
     if (!mapInstanceRef.current) return;
@@ -139,20 +140,22 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       tileLayerRef.current.remove();
     }
 
-    let url = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png';
-    let options: L.TileLayerOptions = { maxZoom: 19, subdomains: 'abcd' };
+    let url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    let options: L.TileLayerOptions = { maxZoom: 19, subdomains: ['a', 'b', 'c'] };
 
-    if (style === 'osm') {
+    if (style === 'carto-dark') {
+      url = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+      options = { maxZoom: 19, subdomains: 'abcd' };
+    } else if (style === 'osm') {
       url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
       options = { maxZoom: 19, subdomains: ['a', 'b', 'c'] };
     } else if (style === 'google-live') {
       // Google Maps live traffic tiles / roadmap tiles
-      const key = googleApiKey.trim() || import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+      const key = googleApiKey.trim() || (import.meta as any).env?.VITE_GOOGLE_MAPS_API_KEY || '';
       if (key) {
         url = `https://mt1.google.com/vt/lyrs=m,traffic&x={x}&y={y}&z={z}&key=${key}`;
         options = { maxZoom: 20 };
       } else {
-        // Fallback to high-res standard tiles if no key provided
         url = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
         options = { maxZoom: 20 };
       }

@@ -16,7 +16,9 @@ import {
   Layers,
   Sparkles,
   User,
-  Check
+  Check,
+  Clock,
+  MapPin
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
@@ -33,9 +35,27 @@ export const Header: React.FC = () => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [headerTime, setHeaderTime] = useState<string>('');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  // Live IST Clock for Belagavi in Header
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setHeaderTime(now.toLocaleTimeString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -55,7 +75,7 @@ export const Header: React.FC = () => {
         {/* Brand Logo & Tagline */}
         <div 
           onClick={() => setCurrentView('landing')} 
-          className="flex items-center gap-3 cursor-pointer group"
+          className="flex items-center gap-3 cursor-pointer group shrink-0"
         >
           <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-blue-600 via-sky-500 to-teal-400 p-0.5 shadow-bubble group-hover:scale-105 transition-all duration-300">
             <div className="w-full h-full bg-brand-card rounded-full flex items-center justify-center">
@@ -74,6 +94,19 @@ export const Header: React.FC = () => {
             <p className="text-[11px] text-slate-400 hidden sm:block font-medium">
               Know the road before you go.
             </p>
+          </div>
+        </div>
+
+        {/* Belagavi, Karnataka Live Location & IST Time Pill */}
+        <div className="hidden xl:flex items-center gap-3 px-3.5 py-1.5 rounded-full bg-brand-card/90 border border-brand-border/80 shadow-inner text-xs">
+          <div className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+            <MapPin className="w-3.5 h-3.5" />
+            <span className="text-white">Belagavi, Karnataka</span>
+          </div>
+          <span className="w-1 h-3 border-r border-brand-border/80" />
+          <div className="flex items-center gap-1.5 text-slate-300 font-mono font-medium">
+            <Clock className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
+            <span>{headerTime || 'IST'}</span>
           </div>
         </div>
 
